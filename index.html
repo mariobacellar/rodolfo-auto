@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rodolfo Automóveis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        .swiper-button-next, .swiper-button-prev {
+            color: #ef4444; /* Vermelho do Tailwind */
+        }
+        .swiper-button-next::after, .swiper-button-prev::after {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <header class="bg-white py-10 text-center border-b-2 border-gray-200">
+        <h1 class="text-4xl md:text-5xl font-bold text-red-600">Rodolfo Automóveis - (21)97007-2708</h1>
+        <p class="text-lg md:text-xl text-gray-600 mt-2">Sua vitrine de veículos seminovos</p>
+    </header>
+
+    <div class="container mx-auto p-4 md:p-8">
+        <h2 class="text-3xl font-bold text-center my-8">Nossa Vitrine</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
+            
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105 max-w-lg">
+                <div class="swiper car-swiper relative">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide"><img src="carro-1/foto-1.jpg" alt="Ford Ka 2020 - Vista Frontal" class="w-full h-56 object-cover"></div>
+                        <div class="swiper-slide"><img src="carro-1/foto-2.jpg" alt="Ford Ka 2020 - Interior" class="w-full h-56 object-cover"></div>
+                        <div class="swiper-slide"><img src="carro-1/foto-3.jpg" alt="Ford Ka 2020 - Traseira" class="w-full h-56 object-cover"></div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-900">Ford Ka 2020</h3>
+                    <p class="mt-2 text-gray-600">Ótimo estado de conservação, completo, 4 portas, ar condicionado e direção elétrica. Único dono.</p>
+                    <p class="mt-4 text-xl font-bold text-green-600">R$ 45.000</p>
+                </div>
+            </div>
+            </div>
+    </div>
+
+    <div class="bg-gray-900 text-white py-12 mt-12 text-center rounded-lg">
+        <div class="container mx-auto px-4">
+            <h3 class="text-2xl font-bold mb-4">Contato</h3>
+            <p class="text-lg">Ficou interessado em algum carro? Entre em contato conosco!</p>
+            <div class="mt-6 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
+                <p class="text-lg">Telefone e WhatsApp:</p>
+                <a href="tel:+5521970072708" class="text-yellow-400 font-bold text-2xl hover:underline">21-97007-2708</a>
+            </div>
+            <a href="https://wa.me/5521970072708" class="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full mt-6 text-lg transition duration-300">
+                Falar no WhatsApp
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const swipers = document.querySelectorAll('.car-swiper');
+            swipers.forEach(swiper => {
+                new Swiper(swiper, {
+                    loop: true,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                });
+            });
+        });
+    </script>
+</body>
+</html>
