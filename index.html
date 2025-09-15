@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
         .swiper-button-next, .swiper-button-prev {
-            color: #ef4444; /* Vermelho do Tailwind */
+            color: #ef4444;
         }
         .swiper-button-next::after, .swiper-button-prev::after {
             font-size: 1.5rem;
@@ -23,26 +23,9 @@
     </header>
 
     <div class="container mx-auto p-4 md:p-8">
-        <h2 class="text-3xl font-bold text-center my-8">Nossa Vitrine</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
-            
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105 max-w-lg">
-                <div class="swiper car-swiper relative">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide"><img src="carro-1/foto-1.jpg" alt="Ford Ka 2020 - Vista Frontal" class="w-full h-56 object-cover"></div>
-                        <div class="swiper-slide"><img src="carro-1/foto-2.jpg" alt="Ford Ka 2020 - Interior" class="w-full h-56 object-cover"></div>
-                        <div class="swiper-slide"><img src="carro-1/foto-3.jpg" alt="Ford Ka 2020 - Traseira" class="w-full h-56 object-cover"></div>
-                    </div>
-                    <div class="swiper-button-next"></div>
-                    <div class="swiper-button-prev"></div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold text-gray-900">Ford Ka 2020</h3>
-                    <p class="mt-2 text-gray-600">Ótimo estado de conservação, completo, 4 portas, ar condicionado e direção elétrica. Único dono.</p>
-                    <p class="mt-4 text-xl font-bold text-green-600">R$ 45.000</p>
-                </div>
-            </div>
+        <h2 class="text-3xl font-bold text-center my-8">Nossos Carros</h2>
+        
+        <div id="car-vitrine" class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
             </div>
     </div>
 
@@ -61,18 +44,103 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const swipers = document.querySelectorAll('.car-swiper');
-            swipers.forEach(swiper => {
-                new Swiper(swiper, {
-                    loop: true,
-                    navigation: {
-                        nextEl: '.swiper-button-next',
-                        prevEl: '.swiper-button-prev',
-                    },
+        document.addEventListener('DOMContentLoaded', async () => {
+            const vitrine = document.getElementById('car-vitrine');
+            const carros = [];
+            let i = 1;
+
+            while (true) {
+                // Tenta carregar o arquivo de título. Se falhar, é o fim da lista de carros.
+                const tituloResponse = await fetch(`carros/carro-${i}/titulo.txt`);
+                if (!tituloResponse.ok) {
+                    break;
+                }
+                const titulo = await tituloResponse.text();
+				console.log("->Titulo: " + titulo); 
+				
+                // Tenta carregar os arquivos de descrição e preço, mas lida com o erro individualmente
+                let descricao = 'Descrição não disponível.';
+                let preco = 'Preço não disponível.';
+
+                try {
+                    const descResponse = await fetch(`carros/carro-${i}/desc.txt`);
+                    if (descResponse.ok) {
+                        descricao = await descResponse.text();
+                    }
+                } catch (e) { /* Ignora erros e mantém o valor padrão */ }
+
+                try {
+                    const precoResponse = await fetch(`carros/carro-${i}/preco.txt`);
+                    if (precoResponse.ok) {
+                        preco = await precoResponse.text();
+                    }
+                } catch (e) { /* Ignora erros e mantém o valor padrão */ }
+
+                // Procura por fotos sequenciais
+                let j = 1;
+                const fotos = [];
+                while(true) {
+                    const fotoPath = `carros/carro-${i}/foto-${j}.jpg`;
+				console.log("->fotoPath: " + fotoPath); 
+
+                    const fotoResponse = await fetch(fotoPath, { method: 'HEAD' });
+                    if (fotoResponse.ok) {
+                        fotos.push(fotoPath);
+                        j++;
+                    } else {
+                        break;
+                    }
+                }
+
+                if (fotos.length > 0) {
+                    carros.push({
+                        titulo: titulo.trim(),
+                        descricao: descricao.trim(),
+                        preco: preco.trim(),
+                        fotos: fotos
+                    });
+                }
+
+                i++;
+				
+            }
+
+            if (carros.length > 0) {
+                carros.forEach(carro => {
+                    const carCardHTML = `
+                        <div class="bg-white rounded-xl shadow-lg overflow-hidden transition-transform transform hover:scale-105 max-w-lg">
+                            <div class="swiper car-swiper relative">
+                                <div class="swiper-wrapper">
+                                    ${carro.fotos.map(foto => `<div class="swiper-slide"><img src="${foto}" alt="${carro.titulo}" class="w-full h-56 object-cover"></div>`).join('')}
+                                </div>
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-2xl font-bold text-gray-900">${carro.titulo}</h3>
+                                <p class="mt-2 text-gray-600">${carro.descricao}</p>
+                                <p class="mt-4 text-xl font-bold text-green-600">R$ ${carro.preco}</p>
+                            </div>
+                        </div>
+                    `;
+                    vitrine.innerHTML += carCardHTML;
                 });
-            });
+
+                const swipers = document.querySelectorAll('.car-swiper');
+                swipers.forEach(swiper => {
+                    new Swiper(swiper, {
+                        loop: true,
+                        navigation: {
+                            nextEl: '.swiper-button-next',
+                            prevEl: '.swiper-button-prev',
+                        },
+                    });
+                });
+            } else {
+                vitrine.innerHTML = '<p class="text-center text-red-500 text-lg">Nenhum carro encontrado. Verifique se as pastas estão em "/carros/".</p>';
+            }
         });
     </script>
 </body>
