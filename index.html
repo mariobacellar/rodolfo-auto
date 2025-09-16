@@ -23,7 +23,7 @@
     </header>
 
     <div class="container mx-auto p-4 md:p-8">
-        <h2 class="text-3xl font-bold text-center my-8">Nossos Carros</h2>
+        <h2 id="car-title" class="text-3xl font-bold text-center my-8">Carregando...</h2>
         
         <div id="car-vitrine" class="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
             </div>
@@ -48,19 +48,17 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const vitrine = document.getElementById('car-vitrine');
+            const carTitle = document.getElementById('car-title');
             const carros = [];
             let i = 1;
 
             while (true) {
-                // Tenta carregar o arquivo de título. Se falhar, é o fim da lista de carros.
                 const tituloResponse = await fetch(`carros/carro-${i}/titulo.txt`);
                 if (!tituloResponse.ok) {
                     break;
                 }
                 const titulo = await tituloResponse.text();
-				console.log("->Titulo: " + titulo); 
-				
-                // Tenta carregar os arquivos de descrição e preço, mas lida com o erro individualmente
+                
                 let descricao = 'Descrição não disponível.';
                 let preco = 'Preço não disponível.';
 
@@ -69,22 +67,19 @@
                     if (descResponse.ok) {
                         descricao = await descResponse.text();
                     }
-                } catch (e) { /* Ignora erros e mantém o valor padrão */ }
+                } catch (e) { }
 
                 try {
                     const precoResponse = await fetch(`carros/carro-${i}/preco.txt`);
                     if (precoResponse.ok) {
                         preco = await precoResponse.text();
                     }
-                } catch (e) { /* Ignora erros e mantém o valor padrão */ }
+                } catch (e) { }
 
-                // Procura por fotos sequenciais
                 let j = 1;
                 const fotos = [];
                 while(true) {
                     const fotoPath = `carros/carro-${i}/foto-${j}.jpg`;
-				console.log("->fotoPath: " + fotoPath); 
-
                     const fotoResponse = await fetch(fotoPath, { method: 'HEAD' });
                     if (fotoResponse.ok) {
                         fotos.push(fotoPath);
@@ -104,7 +99,6 @@
                 }
 
                 i++;
-				
             }
 
             if (carros.length > 0) {
@@ -138,8 +132,13 @@
                         },
                     });
                 });
+
+                // Altera o título após o carregamento
+                carTitle.innerText = "Nossos Carros";
+                
             } else {
                 vitrine.innerHTML = '<p class="text-center text-red-500 text-lg">Nenhum carro encontrado. Verifique se as pastas estão em "/carros/".</p>';
+                carTitle.innerText = "Nossos Carros"; // Altera o título mesmo se não houver carros
             }
         });
     </script>
